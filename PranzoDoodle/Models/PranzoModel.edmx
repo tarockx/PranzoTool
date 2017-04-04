@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="PranzoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="PranzoOptions">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="descrizione" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="defaultOption" Type="smallint" Nullable="false" />
+          <Property Name="nome" Type="nvarchar(max)" />
+          <Property Name="telefono" Type="nvarchar" MaxLength="50" />
+          <Property Name="menuUrl" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="PranzoSettings">
+          <Key>
+            <PropertyRef Name="key" />
+          </Key>
+          <Property Name="key" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="value" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PranzoUsers">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nome" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="preferenza" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_PranzoUsers_PranzoOptions">
+          <End Role="PranzoOptions" Type="Self.PranzoOptions" Multiplicity="1" />
+          <End Role="PranzoUsers" Type="Self.PranzoUsers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PranzoOptions">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="PranzoUsers">
+              <PropertyRef Name="preferenza" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PranzoModelStoreContainer">
+          <EntitySet Name="PranzoOptions" EntityType="Self.PranzoOptions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PranzoSettings" EntityType="Self.PranzoSettings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PranzoUsers" EntityType="Self.PranzoUsers" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_PranzoUsers_PranzoOptions" Association="Self.FK_PranzoUsers_PranzoOptions">
+            <End Role="PranzoOptions" EntitySet="PranzoOptions" />
+            <End Role="PranzoUsers" EntitySet="PranzoUsers" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PranzoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="carpooltoolEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="PranzoOptions" EntityType="PranzoModel.PranzoOptions" />
+          <EntitySet Name="PranzoUsers" EntityType="PranzoModel.PranzoUsers" />
+          <AssociationSet Name="FK_PranzoUsers_PranzoOptions" Association="PranzoModel.FK_PranzoUsers_PranzoOptions">
+            <End Role="PranzoOptions" EntitySet="PranzoOptions" />
+            <End Role="PranzoUsers" EntitySet="PranzoUsers" />
+          </AssociationSet>
+          <EntitySet Name="PranzoSettings" EntityType="PranzoModel.PranzoSettings" />
+        </EntityContainer>
+        <EntityType Name="PranzoOptions">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="descrizione" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PranzoUsers" Relationship="PranzoModel.FK_PranzoUsers_PranzoOptions" FromRole="PranzoOptions" ToRole="PranzoUsers" />
+          <Property Name="defaultOption" Type="Int16" Nullable="false" />
+          <Property Name="nome" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="menuUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="PranzoUsers">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nome" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="preferenza" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="PranzoOptions" Relationship="PranzoModel.FK_PranzoUsers_PranzoOptions" FromRole="PranzoUsers" ToRole="PranzoOptions" />
+        </EntityType>
+        <Association Name="FK_PranzoUsers_PranzoOptions">
+          <End Type="PranzoModel.PranzoOptions" Role="PranzoOptions" Multiplicity="1" />
+          <End Type="PranzoModel.PranzoUsers" Role="PranzoUsers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PranzoOptions">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="PranzoUsers">
+              <PropertyRef Name="preferenza" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PranzoSettings">
+          <Key>
+            <PropertyRef Name="key" />
+          </Key>
+          <Property Name="key" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="value" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PranzoModelStoreContainer" CdmEntityContainer="carpooltoolEntities">
+          <EntitySetMapping Name="PranzoOptions">
+            <EntityTypeMapping TypeName="PranzoModel.PranzoOptions">
+              <MappingFragment StoreEntitySet="PranzoOptions">
+                <ScalarProperty Name="menuUrl" ColumnName="menuUrl" />
+                <ScalarProperty Name="telefono" ColumnName="telefono" />
+                <ScalarProperty Name="nome" ColumnName="nome" />
+                <ScalarProperty Name="defaultOption" ColumnName="defaultOption" />
+                <ScalarProperty Name="descrizione" ColumnName="descrizione" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PranzoUsers">
+            <EntityTypeMapping TypeName="PranzoModel.PranzoUsers">
+              <MappingFragment StoreEntitySet="PranzoUsers">
+                <ScalarProperty Name="preferenza" ColumnName="preferenza" />
+                <ScalarProperty Name="nome" ColumnName="nome" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PranzoSettings">
+            <EntityTypeMapping TypeName="PranzoModel.PranzoSettings">
+              <MappingFragment StoreEntitySet="PranzoSettings">
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="key" ColumnName="key" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
