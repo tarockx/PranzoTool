@@ -2,32 +2,80 @@
 @model UsersAndOptions
 
 @{
-    ViewBag.Title = "View";
+    ViewBag.Title = "PranzoTool - Home";
 }
 
 @using (Html.BeginForm("EditSchedule", "Home", FormMethod.Post, new { @class = "ui form", @id = "editForm" }))
 {
     int colW = 70 / Model.Options.Count();
 
-    <table class="ui teal celled definition unstackable table">
+    <blockquote style="text-align:center;">
+        <h2 style="margin-bottom:5px;">È @DateTime.Now.ToString("dddd dd/MM"), segatevi sul doodle, bestie!</h2>
+    </blockquote>
+
+    <table class="ui celled definition unstackable table">
         <thead>
             <tr>
                 <th></th>
                 @foreach (var option in Model.Options)
                 {
-                    <th class="center aligned">
-                        <a class="ui right floated red trash icon" onclick="$('#popupDeleteOption')">
+                    var deletePopupId = "deletePopup" + option.id;
+                    var deleteFormId = "deleteForm" + option.id;
+                    <th class="center aligned" style="border-top: .2em solid #00B5AD;">
+                        @if (option.defaultOption == 0)
+                        {
+                            <i class="ui right floated red trash icon" style="cursor:pointer; float:right;" onclick="$('#@deletePopupId').modal('show');">
 
-                        </a>
-                        <a class="popup-trigger">
-                            @option.descrizione
-                        </a>
+                            </i>
+                            <a class="popup-trigger" style="cursor:pointer; text-decoration:underline;">
+                                @option.descrizione
+                            </a>
+                        }
+                        else
+                        {
+                            <a>
+                                @option.descrizione
+                            </a>
+                        }
                         <div class="ui popup">
                             <div class="header">
                                 @(string.IsNullOrWhiteSpace(option.nome) ? "N/A" : option.nome)
                             </div>
-                            
+                            <div class="content">
+                                @if (!string.IsNullOrEmpty(option.telefono))
+                                {
+                                    <div>Telefono: <strong>@option.telefono</strong></div>
+                                }
+                                @if (!string.IsNullOrEmpty(option.menuUrl))
+                                {
+                                    <div>
+                                        <a target="_blank" href="@option.menuUrl">Consulta il menu</a>
+                                    </div>
+                                }
+                            </div>
                         </div>
+
+                        @if (option.defaultOption == 0)
+                        {
+                            <div class="ui modal" id="@deletePopupId">
+                                <div class="ui header">
+                                    Elimina @(string.IsNullOrWhiteSpace(option.nome) ? option.descrizione : option.nome)
+                                </div>
+                                <div class="ui content">
+                                    @using (Html.BeginForm("DeleteOption", "Home", option, FormMethod.Post, new {@id = deleteFormId }))
+                                    {
+                                        <p>
+                                            Sei sicuro di voler eliminare questo luogo dalle scelte disponibili per il pranzo?
+                                            Nota: chiunque fosse segnato per questo luogo verrà resettato all'opzione predefinita
+                                        </p>
+                                    }
+                                </div>
+                                <div class="ui actions">
+                                    <a class="ui green button" onclick="loadAndSubmit(this, $('#@deleteFormId'));">Elimina</a>
+                                    <div class="ui cancel negative button">Annulla</div>
+                                </div>
+                            </div>
+                        }
                     </th>
                 }
             </tr>
@@ -36,11 +84,13 @@
         <tbody>
             @for (int i = 0; i < Model.Users.Count(); i++)
             {
-
                 PranzoUsers user = Model.Users.ElementAt(i);
                 <tr>
                     <td style="padding:0; width:30%;">
                         <input type="hidden" name="users[@i].id" value="@user.id" />
+                        <input type="hidden" name="oldModel[@i].id" value="@user.id" />
+                        <input type="hidden" name="oldModel[@i].nome" value="@user.nome" />
+                        <input type="hidden" name="oldModel[@i].preferenza" value="@user.preferenza" />
 
                         <div class="ui fluid action input" style="padding:2px;">
                             <input type="text" name="users[@i].nome" value="@user.nome" />
@@ -84,11 +134,13 @@
                 {
                     int count = Model.Options.ElementAt(j).PranzoUsers.Count;
                     <td class="center aligned" style="width:@colW%;">
-                        <h3 class="ui header">
-                            <i class="ui users icon @(count > 0 ? "green" : "red")"></i>
-                            &nbsp;
-                            @count
-                        </h3>
+                        @if (Model.Options.ElementAt(j).defaultOption == 0) {
+                            <h3 class="ui header">
+                                <i class="ui users icon @(count > 0 ? "green" : "red")"></i>
+                                &nbsp;
+                                @count
+                            </h3>
+                        }
                     </td>
                 }
             </tr>

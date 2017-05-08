@@ -20,12 +20,18 @@ namespace PranzoDoodle.Controllers
 
 
         [HttpPost]
-        public ActionResult EditSchedule(IEnumerable<PranzoUsers> users)
+        public ActionResult EditSchedule(IEnumerable<PranzoUsers> users, IEnumerable<PranzoUsers> oldModel)
         {
             carpooltoolEntities entities = new carpooltoolEntities();
 
             foreach (var user in users)
             {
+                var oldUser = (from o in oldModel where o.id == user.id select o).FirstOrDefault();
+                if(oldUser.nome.Equals(user.nome) && oldUser.preferenza == user.preferenza)
+                {
+                    continue;
+                }
+
                 entities.PranzoUsers.Attach(user);
                 var entry = entities.Entry(user);
                 entry.Property(e => e.nome).IsModified = true;
@@ -85,6 +91,37 @@ namespace PranzoDoodle.Controllers
                 {
                     option.defaultOption = 0;
                     entities.PranzoOptions.Add(option);
+                    entities.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    ex.ToString();
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult DeleteOption(PranzoOptions option)
+        {
+            if (option != null && option.defaultOption == 0)
+            {
+                carpooltoolEntities entities = new carpooltoolEntities();
+                try
+                {
+                    //Reset users
+                    var defaultOption = (from o in entities.PranzoOptions where o.defaultOption == 1 select o).FirstOrDefault();
+                    foreach (var user in entities.PranzoUsers)
+                    {
+                        if (option.id == user.preferenza)
+                        {
+                            user.preferenza = defaultOption.id;
+                        }
+                    }
+
+                    var toDelete = (from o in entities.PranzoOptions where o.id == option.id select o).FirstOrDefault();
+                    entities.PranzoOptions.Remove(toDelete);
                     entities.SaveChanges();
                 }
                 catch (Exception ex)
